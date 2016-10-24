@@ -3,7 +3,7 @@
 CREATE TABLE 'thesis'(
     id INTEGER NOT NULL,
     thesis_type_id INTEGER,
-    key VARCHAR(50) NOT NULL,
+    key VARCHAR(50),
     mdate DATE,
     title VARCHAR(300),              /* jest 5306116 */
     year INTEGER,                   /* jest 3515191 */
@@ -12,7 +12,7 @@ CREATE TABLE 'thesis'(
 
 CREATE TABLE 'thesis_type'(
     id INTEGER NOT NULL,
-    type_name VARCHAR(20),
+    type_name VARCHAR(20) UNIQUE,
     /*
         This is enum implementation for sqlite
         article         - 0
