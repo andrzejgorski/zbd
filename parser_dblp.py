@@ -15,6 +15,7 @@ from db_connection import (
     Person,
     Thesis,
     ThesisEE,
+    ThesisExtraInfo,
     ThesisPages,
     ThesisType,
     ThesisUrl,
@@ -50,24 +51,36 @@ class DBLP_DB_Parser(object):
             self.session.commit()
 
     def _prepare_handlers(self):
+
         self.tag_handlers = {
-            'dblp': self._dblp_handler,
             'author': self._author_handler,
-            'title': self._title_handler,
-            'pages': self._pages_handler,
-            'year': self._year_handler,
-            'volume': self._volume_handler,
+            'booktitle': self._booktitle_handler,
+            'crossref': self._crossref_handler,
+            'dblp': self._dblp_handler,
+            'editor': self._editor_handler,
+            'ee': self._ee_handler,
             'journal': self._journal_hanlder,
             'number': self._number_handler,
+            'pages': self._pages_handler,
+            'title': self._title_handler,
             'url': self._url_handler,
-            'ee': self._ee_handler,
-            'editor': self._editor_handler,
-            'crossref': self._crossref_handler,
-            'booktitle': self._booktitle_handler,
-            'isbn': self._dblp_handler,
-            'series': self._dblp_handler,
-            'publisher': self._dblp_handler,
+            'volume': self._volume_handler,
+            'year': self._year_handler,
+
+            # For extra infos
+            'address': self._extra_info_handler,
+            'cdrom': self._extra_info_handler,
+            'chapter': self._extra_info_handler,
+            'cite': self._extra_info_handler,
+            'isbn': self._extra_info_handler,
+            'month': self._extra_info_handler,
+            'note': self._extra_info_handler,
+            'publisher': self._extra_info_handler,
+            'publnr': self._extra_info_handler,
+            'school': self._extra_info_handler,
+            'series': self._extra_info_handler,
         }
+
         thesis_keys = thesis_types_map.keys()
         for key in thesis_keys:
             self.tag_handlers[key] = self._thesis_handler
@@ -92,6 +105,11 @@ class DBLP_DB_Parser(object):
     @tag_handler
     def _dblp_handler(self, event, elem, thesis):
         pass
+
+    @tag_handler
+    def _extra_info_handler(self, event, elem, thesis):
+        extra_info = ThesisExtraInfo(key=elem.tag, value=elem.text)
+        thesis.extra_infos.append(extra_info)
 
     def _get_person(self, name):
         person = (
