@@ -1,3 +1,4 @@
+from datetime import datetime
 import lxml.etree as etree
 from sqlalchemy.exc import IntegrityError
 
@@ -42,7 +43,7 @@ class DBLP_DB_Parser(object):
             'author': self._dblp_handler,
             'title': self._title_handler,
             'pages': self._dblp_handler,
-            'year': self._dblp_handler,
+            'year': self._year_handler,
             'volume': self._dblp_handler,
             'journal': self._dblp_handler,
             'number': self._dblp_handler,
@@ -73,12 +74,30 @@ class DBLP_DB_Parser(object):
     def _dblp_handler(self, event, elem, thesis):
         return thesis
 
-    def _title_handler(self, event, elem, thesis):
+    def _year_handler(self, event, elem, thesis):
+        thesis.year = elem.text
         return thesis
+
+    def _title_handler(self, event, elem, thesis):
+        thesis.title = elem.text
+        return thesis
+
+    def _get_thesis_attribs(self, elem):
+        keys = ['key', 'mdate']
+        result = {
+            'key': elem.attrib['key'],
+            'mdate': datetime.strptime(
+                        elem.attrib['mdate'], '%Y-%m-%d').date(),
+        }
+        return result
 
     def _thesis_handler(self, event, elem, thesis):
         if event == 'start' and thesis is None:
-            return Thesis(thesis_type=thesis_types_map[elem.tag])
+            keys = self._get_thesis_attribs(elem)
+            return Thesis(
+                    thesis_type=thesis_types_map[elem.tag],
+                    **keys
+                )
         elif event == 'end' and thesis is not None:
             self.session.add(thesis)
             return None
