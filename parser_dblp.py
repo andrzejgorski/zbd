@@ -44,7 +44,7 @@ class DBLP_DB_Parser(object):
             'title': self._title_handler,
             'pages': self._dblp_handler,
             'year': self._year_handler,
-            'volume': self._dblp_handler,
+            'volume': self._volume_handler,
             'journal': self._dblp_handler,
             'number': self._dblp_handler,
             'url': self._dblp_handler,
@@ -72,6 +72,16 @@ class DBLP_DB_Parser(object):
         self.session.close()
 
     def _dblp_handler(self, event, elem, thesis):
+        return thesis
+
+    # TODO change db_scheme to add this
+    # def _pages_handler(self, event, elem, thesis):
+    #     thesis.pages = elem.txt
+    #     return thesis
+
+    def _volume_handler(self, event, elem, thesis):
+        volume = Volume(volume=elem.text)
+        thesis.volume.append(volume)
         return thesis
 
     def _year_handler(self, event, elem, thesis):
