@@ -105,10 +105,9 @@ class DBLP_DB_Parser(object):
         for event, elem in self.iterator:
             try:
                 thesis = self.tag_handlers[elem.tag](event, elem, thesis)
-            except KeyError:
-                pass
+            except Exception as e:
+                print e
 
-        self.session.commit()
         self.session.close()
 
     @tag_handler
@@ -122,12 +121,22 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _booktitle_handler(self, event, elem, thesis):
-        booktitle = BookTitle(booktitle=elem.text)
+        booktitle = (
+            self.session.query(BookTitle)
+            .filter(BookTitle.booktitle == elem.text)
+            .first()
+        )
+        booktitle = booktitle or BookTitle(booktitle=elem.text)
         thesis.booktitle.append(booktitle)
 
     @tag_handler
     def _crossref_handler(self, event, elem, thesis):
-        crossref = Crossref(crossref=elem.text)
+        crossref = (
+            self.session.query(Crossref)
+            .filter(Crossref.crossref == elem.text)
+            .first()
+        )
+        crossref = crossref or Crossref(crossref=elem.text)
         thesis.crossref.append(crossref)
 
     def _get_person(self, name):
@@ -157,7 +166,12 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _pages_handler(self, event, elem, thesis):
-        pages = ThesisPages(pages=elem.text)
+        pages = (
+            self.session.query(Pages)
+            .filter(Pages.pages == elem.text)
+            .first()
+        )
+        pages = pages or Pages(pages=elem.text)
         thesis.pages.append(pages)
 
     @tag_handler
@@ -172,17 +186,32 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _number_handler(self, event, elem, thesis):
-        number = Number(number=elem.text)
+        number = (
+            self.session.query(Number)
+            .filter(Number.number == elem.text)
+            .first()
+        )
+        number = number or Number(number=elem.text)
         thesis.number.append(number)
 
     @tag_handler
     def _journal_hanlder(self, event, elem, thesis):
-        journal = Journal(journal=elem.text)
+        journal = (
+            self.session.query(Journal)
+            .filter(Journal.journal == elem.text)
+            .first()
+        )
+        journal = journal or Journal(journal=elem.text)
         thesis.journal.append(journal)
 
     @tag_handler
     def _volume_handler(self, event, elem, thesis):
-        volume = Volume(volume=elem.text)
+        volume = (
+            self.session.query(Volume)
+            .filter(Volume.volume == elem.text)
+            .first()
+        )
+        volume = volume or Volume(volume=elem.text)
         thesis.volume.append(volume)
 
     @tag_handler
@@ -197,7 +226,8 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _title_content_handler(self, event, elem, thesis):
-        thesis.title += elem.text
+        text = elem.text or ''
+        thesis.title += text
 
     def _get_thesis_attrs(self, elem):
         thesis_attrs = {
@@ -223,6 +253,7 @@ class DBLP_DB_Parser(object):
             return thesis
         elif event == 'end' and thesis is not None:
             self.session.add(thesis)
+            self.session.commit()
             return None
         raise Exception('Error in thesis handler')
 
