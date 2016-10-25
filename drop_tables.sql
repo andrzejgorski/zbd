@@ -15,5 +15,6 @@ DROP TABLE 'thesis_booktitle';
 DROP TABLE 'crossref';
 DROP TABLE 'thesis_crossref';
 DROP TABLE 'thesis_type';
+DROP TABLE 'thesis_pages';
 DROP TABLE 'thesis';
 

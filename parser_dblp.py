@@ -8,15 +8,24 @@ from consts import (
 )
 from db_connection import (
     DataBase,
-    Thesis,
-    ThesisType,
-    Person,
-    ThesisEE,
-    ThesisUrl,
-    Volume,
     Journal,
     Number,
+    Person,
+    Thesis,
+    ThesisEE,
+    ThesisPages,
+    ThesisType,
+    ThesisUrl,
+    Volume,
 )
+
+def tag_handler(func):
+    def wrapper(self, event, elem, thesis):
+        if event == 'end':
+            func(self, event, elem, thesis)
+        return thesis
+
+    return wrapper
 
 
 class DBLP_DB_Parser(object):
@@ -42,13 +51,13 @@ class DBLP_DB_Parser(object):
             'dblp': self._dblp_handler,
             'author': self._dblp_handler,
             'title': self._title_handler,
-            'pages': self._dblp_handler,
+            'pages': self._pages_handler,
             'year': self._year_handler,
             'volume': self._volume_handler,
             'journal': self._journal_hanlder,
             'number': self._number_handler,
             'url': self._url_handler,
-            'ee': self._dblp_handler,
+            'ee': self._ee_handler,
         }
         thesis_keys = thesis_types_map.keys()
         for key in thesis_keys:
@@ -71,41 +80,47 @@ class DBLP_DB_Parser(object):
         self.session.commit()
         self.session.close()
 
+    @tag_handler
     def _dblp_handler(self, event, elem, thesis):
-        return thesis
+        pass
 
-    # TODO change db_scheme to add this
-    # def _pages_handler(self, event, elem, thesis):
-    #     thesis.pages = elem.txt
-    #     return thesis
+    @tag_handler
+    def _pages_handler(self, event, elem, thesis):
+        pages = ThesisPages(pages=elem.text)
+        thesis.pages.append(pages)
 
+    @tag_handler
+    def _ee_handler(self, event, elem, thesis):
+        ee = ThesisEE(ee=elem.text)
+        thesis.ees.append(ee)
+
+    @tag_handler
     def _url_handler(self, event, elem, thesis):
         url = ThesisUrl(url=elem.text)
         thesis.urls.append(url)
-        return thesis
 
+    @tag_handler
     def _number_handler(self, event, elem, thesis):
         number = Number(number=elem.text)
         thesis.number.append(number)
-        return thesis
 
+    @tag_handler
     def _journal_hanlder(self, event, elem, thesis):
         journal = Journal(journal=elem.text)
         thesis.journal.append(journal)
-        return thesis
 
+    @tag_handler
     def _volume_handler(self, event, elem, thesis):
         volume = Volume(volume=elem.text)
         thesis.volume.append(volume)
-        return thesis
 
+    @tag_handler
     def _year_handler(self, event, elem, thesis):
         thesis.year = elem.text
-        return thesis
 
+    @tag_handler
     def _title_handler(self, event, elem, thesis):
         thesis.title = elem.text
-        return thesis
 
     def _get_thesis_attribs(self, elem):
         keys = ['key', 'mdate']

@@ -13,4 +13,47 @@
 <ee>http://dx.doi.org/10.1007/BF03036466</ee>
 </article>
 
+<article mdate="2016-07-13" key="journals/acta/Simon83">
+<author>Hans Ulrich Simon</author>
+<title>Pattern Matching in Trees and Nets.</title>
+<pages>227-248</pages>
+<year>1983</year>
+<volume>20</volume>
+<journal>Acta Inf.</journal>
+<url>db/journals/acta/acta20.html#Simon83</url>
+<ee>http://dx.doi.org/10.1007/BF01257084</ee>
+</article>
+<article mdate="2011-01-11" key="journals/acta/GoodmanS83">
+<author>Nathan Goodman</author>
+<author>Oded Shmueli</author>
+<title>NP-complete Problems Simplified on Tree Schemas.</title>
+<pages>171-178</pages>
+<year>1983</year>
+<volume>20</volume>
+<journal>Acta Inf.</journal>
+<url>db/journals/acta/acta20.html#GoodmanS83</url>
+<ee>http://dx.doi.org/10.1007/BF00289414</ee>
+</article>
+<article mdate="2011-01-11" key="journals/acta/Blum82">
+<author>Norbert Blum</author>
+<title>On the Power of Chain Rules in Context Free Grammars.</title>
+<pages>425-433</pages>
+<year>1982</year>
+<volume>17</volume>
+<journal>Acta Inf.</journal>
+<url>db/journals/acta/acta17.html#Blum82</url>
+<ee>http://dx.doi.org/10.1007/BF00264161</ee>
+</article>
+<article mdate="2013-11-28" key="journals/acta/Schonhage77"> 
+<author>Arnold Sch&ouml;nhage</author>
+<title>Schnelle Multiplikation von Polynomen &uuml;ber K&ouml;rpern der Charakteristik 2.</title>
+<journal>Acta Inf.</journal>
+<volume>7</volume> 
+<year>1977</year> 
+<pages>395-398</pages>
+<url>db/journals/acta/acta7.html#Schonhage77</url>
+<ee>http://dx.doi.org/10.1007/BF00289470</ee>
+</article>
+
+
 </dblp>

@@ -48,7 +48,6 @@ CREATE TABLE 'crossref'(
 CREATE TABLE 'thesis_booktitle'(
     thesis_id INTEGER NOT NULL,
     booktitle_id INTEGER NOT NULL,
-    pages VARCHAR(10),
     PRIMARY KEY(thesis_id, booktitle_id)
 );
 
@@ -69,7 +68,6 @@ CREATE TABLE 'thesis_number'(
     PRIMARY KEY(thesis_id, number_id)
 );
 
-
 CREATE TABLE 'number'(
     /*
         possible values:        616
@@ -78,6 +76,13 @@ CREATE TABLE 'number'(
     */
     id iNTEGER NOT NULL,
     number VARCHAR(40),
+    PRIMARY KEY(id)
+);
+
+CREATE TABLE 'thesis_pages'(
+    id INTEGER NOT NULL,
+    thesis_id INTEGER NOT NULL,
+    pages VARCHAR(40),
     PRIMARY KEY(id)
 );
 

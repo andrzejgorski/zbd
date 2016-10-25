@@ -101,6 +101,7 @@ class Thesis(Base):
     journal = relationship('Journal', secondary=thesis_journal)
 
     thesis_type = relationship('ThesisType')
+    pages = relationship('ThesisPages', back_populates='thesis')
     urls = relationship('ThesisUrl', back_populates='thesis')
     ees = relationship('ThesisEE', back_populates='thesis')
     extra_infos = relationship('ThesisExtraInfo')
@@ -148,6 +149,15 @@ class Journal(Base):
 
     id = Column(Integer, Sequence('journal_id_seq'), primary_key=True)
     journal = Column(String(40))
+
+
+class ThesisPages(Base):
+    __tablename__ = 'thesis_pages'
+
+    id = Column(Integer, Sequence('thesis_pages_id_seq'), primary_key=True)
+    thesis_id = Column(Integer, ForeignKey('thesis.id'))
+    thesis = relationship('Thesis', back_populates='pages')
+    pages = Column(String(40))
 
 
 class ThesisUrl(Base):
