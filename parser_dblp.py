@@ -18,33 +18,6 @@ from db_connection import (
 )
 
 
-# class Thesis(object):
-#     SPECIAL_ATTRIBUTES = [
-#         'author', 'editor', 'title', 'booktitle', 'ee',
-#         'crossref', 'number', 'volume', 'journal', 'url',
-#     ]
-# 
-#     attributes_handler = [
-# 
-#     ]
-# 
-#     def __init__(self, connection, thesis_type):
-#         self.connection = connection
-#         if thesis_type in self.THESIS_TYPES:
-#             self.thesis_type = thesis_type
-#         else:
-#             raise Exception('Unknown thesis type')
-#         self.attributes = dict()
-# 
-#     def add_attribute(self, attribute, value):
-#         if not attribute in self.SPECIAL_ATTRIBUTES:
-#             handler_name = 'default'
-#         self.attributes[attribute] = value
-# 
-#     def save(self):
-#         pass
-
-
 class DBLP_DB_Parser(object):
     def __init__(self, xml_path='dblp.xml', db_path='baza_dblp.sqlite3'):
         self.iterator = etree.iterparse(
@@ -55,6 +28,7 @@ class DBLP_DB_Parser(object):
         self.session = DataBase(db_url).get_session()
         self._prepare_handlers()
         self._add_thesis_types()
+        self._update_thesis_type_map()
 
     def _add_thesis_types(self):
         if self.session.query(ThesisType).count() != 9:
@@ -83,7 +57,9 @@ class DBLP_DB_Parser(object):
         thesis_keys = thesis_types_map.keys()
         for thesis_type in thesis_keys:
             thesis_types_map[thesis_type] = (
-                self.session.query(ThesisType).where(thesis_type)
+                self.session.query(ThesisType)
+                .filter(ThesisType.type_name == thesis_type)
+                .first()
             )
 
     def parse(self):
@@ -91,7 +67,6 @@ class DBLP_DB_Parser(object):
         for event, elem in self.iterator:
             thesis = self.tag_handlers[elem.tag](event, elem, thesis)
 
-        import ipdb; ipdb.set_trace()
         self.session.commit()
         self.session.close()
 
@@ -106,8 +81,7 @@ class DBLP_DB_Parser(object):
             return Thesis(thesis_type=thesis_types_map[elem.tag])
         elif event == 'end' and thesis is not None:
             self.session.add(thesis)
-            # return None
-            return thesis
+            return None
         raise Exception('Error in thesis handler')
 
 
