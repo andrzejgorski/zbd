@@ -106,7 +106,18 @@ class DBLP_DB_Parser(object):
             try:
                 thesis = self.tag_handlers[elem.tag](event, elem, thesis)
             except Exception as e:
-                print e
+                if thesis:
+                    thesis_repr = thesis.__dict__
+                else:
+                    thesis_repr = '< no thesis >'
+                error = (
+                    'Error while processing thesis: %s\n' % thesis_repr
+                    + 'Error content:\n%s\n' % str(e)
+                )
+                print error
+                with open("errors", "a") as errors_file:
+                    errors_file.write(error)
+                thesis = None
 
         self.session.close()
 
