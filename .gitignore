@@ -1,3 +1,4 @@
 dblp.xml
 baza_dblp.sqlite3
+baza_dblp.sqlite3-journal
 *.pyc

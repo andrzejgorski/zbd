@@ -192,7 +192,13 @@ CREATE TABLE 'person'(
     */
     id INTEGER NOT NULL,
     name VARCHAR(40),
-    mdate DATE,
-    cdata VARCHAR(40),
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE 'person_extra_info'(
+    id INTEGER NOT NULL,
+    person_id INTEGER NOT NULL,
+    key VARCHAR(20),
+    value VARCHAR(100),
     PRIMARY KEY (id)
 );

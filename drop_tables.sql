@@ -2,6 +2,7 @@ DROP TABLE 'person';
 DROP TABLE 'thesis_editor';
 DROP TABLE 'thesis_author';
 DROP TABLE 'thesis_extra_info';
+DROP TABLE 'person_extra_info';
 DROP TABLE 'thesis_ee';
 DROP TABLE 'thesis_url';
 DROP TABLE 'thesis_journal';

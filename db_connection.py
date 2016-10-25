@@ -77,7 +77,7 @@ thesis_editor = Table(
 
 class DataBase(object):
     def __init__(self, db_url):
-        self.engine = create_engine(db_url, echo=True)
+        self.engine = create_engine(db_url, echo=False)
         self.session_class = sessionmaker(bind=self.engine)
 
     def get_session(self):
@@ -192,8 +192,16 @@ class Person(Base):
 
     id = Column(Integer, Sequence('person_id_seq'), primary_key=True)
     name = Column(String(20))
-    mdate = Column(Date)
-    cdata = Column(String(40))
+    extra_infos = relationship('PersonExtraInfo')
+
+
+class PersonExtraInfo(Base):
+    __tablename__ = 'person_extra_info'
+
+    id = Column(Integer, Sequence('person_extra_info_id_seq'), primary_key=True)
+    person_id = Column(Integer, ForeignKey('person.id'))
+    key = Column(String(20))
+    value = Column(String(100))
 
 
 # Test code

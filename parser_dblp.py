@@ -12,6 +12,7 @@ from db_connection import (
     DataBase,
     Journal,
     Number,
+    PersonExtraInfo,
     Person,
     Thesis,
     ThesisEE,
@@ -25,7 +26,7 @@ from db_connection import (
 
 def tag_handler(func):
     def wrapper(self, event, elem, thesis):
-        if event == 'end':
+        if event == 'start':
             func(self, event, elem, thesis)
         return thesis
     return wrapper
@@ -79,6 +80,11 @@ class DBLP_DB_Parser(object):
             'publnr': self._extra_info_handler,
             'school': self._extra_info_handler,
             'series': self._extra_info_handler,
+            'sub': self._title_content_handler,
+            'sup': self._title_content_handler,
+            'i': self._title_content_handler,
+            'tt': self._title_content_handler,
+            'ref': self._title_content_handler,
         }
 
         thesis_keys = thesis_types_map.keys()
@@ -97,7 +103,10 @@ class DBLP_DB_Parser(object):
     def parse(self):
         thesis = None
         for event, elem in self.iterator:
-            thesis = self.tag_handlers[elem.tag](event, elem, thesis)
+            try:
+                thesis = self.tag_handlers[elem.tag](event, elem, thesis)
+            except KeyError:
+                pass
 
         self.session.commit()
         self.session.close()
@@ -111,14 +120,6 @@ class DBLP_DB_Parser(object):
         extra_info = ThesisExtraInfo(key=elem.tag, value=elem.text)
         thesis.extra_infos.append(extra_info)
 
-    def _get_person(self, name):
-        person = (
-            self.session.query(Person)
-            .filter(Person.name == name)
-            .first()
-        )
-        return person or Person(name=name)
-
     @tag_handler
     def _booktitle_handler(self, event, elem, thesis):
         booktitle = BookTitle(booktitle=elem.text)
@@ -129,14 +130,29 @@ class DBLP_DB_Parser(object):
         crossref = Crossref(crossref=elem.text)
         thesis.crossref.append(crossref)
 
+    def _get_person(self, name):
+        person = (
+            self.session.query(Person)
+            .filter(Person.name == name)
+            .first()
+        )
+        return person or Person(name=name)
+
+    def _add_person_extra_infos(self, elem, person):
+        for key in elem.attrib.keys():
+            person.extra_infos.append(
+                PersonExtraInfo(key=key, value=elem.attrib[key]))
+
     @tag_handler
     def _editor_handler(self, event, elem, thesis):
         person = self._get_person(elem.text)
+        self._add_person_extra_infos(elem, person)
         thesis.editors.append(person)
 
     @tag_handler
     def _author_handler(self, event, elem, thesis):
         person = self._get_person(elem.text)
+        self._add_person_extra_infos(elem, person)
         thesis.authors.append(person)
 
     @tag_handler
@@ -176,6 +192,12 @@ class DBLP_DB_Parser(object):
     @tag_handler
     def _title_handler(self, event, elem, thesis):
         thesis.title = elem.text
+        if not thesis.title:
+            thesis.title = ''
+
+    @tag_handler
+    def _title_content_handler(self, event, elem, thesis):
+        thesis.title += elem.text
 
     def _get_thesis_attrs(self, elem):
         thesis_attrs = {
@@ -206,5 +228,5 @@ class DBLP_DB_Parser(object):
 
 
 if __name__ == "__main__":
-    parser = DBLP_DB_Parser('part.xml', 'baza_dblp.sqlite3')
+    parser = DBLP_DB_Parser('dblp.xml', 'baza_dblp.sqlite3')
     parser.parse()

@@ -80,6 +80,41 @@
 <publisher>Springer</publisher>
 <url>db/journals/thipeac/thipeac2.html</url>
 </proceedings>
+<article mdate="2012-07-03" key="journals/pvldb/AgarwalRB12">
+<author>Manoj K. Agarwal</author>
+<author>Krithi Ramamritham</author>
+<author>Manish Bhide</author>
+<title>Real Time Discovery of Dense Clusters in Highly Dynamic Graphs: Identifying Real World Events in Highly Dynamic Environments.</title>
+<pages>980-991</pages>
+<year>2012</year>
+<volume>5</volume>
+<journal>PVLDB</journal>
+<number>10</number>
+<ee>http://vldb.org/pvldb/vol5/p980_manojkagarwal_vldb2012.pdf</ee>
+<url>db/journals/pvldb/pvldb5.html#AgarwalRB12</url>
+</article>
+<article mdate="2016-03-03" key="journals/pvldb/Ley09">
+<author aux="test">Michael Ley</author>
+<title>DBLP - Some Lessons Learned.</title>
+<pages>1493-1500</pages>
+<year>2009</year>
+<volume>2</volume>
+<journal>PVLDB</journal>
+<number>2</number>
+<ee>http://www.vldb.org/pvldb/2/vldb09-98.pdf</ee>
+<url>db/journals/pvldb/pvldb2.html#Ley09</url>
+</article>
 
+<article mdate="2011-01-11" key="journals/acta/Kouvatsos86">
+<author>Demetres D. Kouvatsos</author>
+<title>Maximum Entropy and the <i> G/G/1/N </i> Queue.</title>
+<pages>545-565</pages>
+<year>1986</year>
+<volume>23</volume>
+<journal>Acta Inf.</journal>
+<number>5</number>
+<url>db/journals/acta/acta23.html#Kouvatsos86</url>
+<ee>http://dx.doi.org/10.1007/BF00288469</ee>
+</article>
 
 </dblp>
