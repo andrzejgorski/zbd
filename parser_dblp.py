@@ -45,9 +45,9 @@ class DBLP_DB_Parser(object):
             'pages': self._dblp_handler,
             'year': self._year_handler,
             'volume': self._volume_handler,
-            'journal': self._dblp_handler,
-            'number': self._dblp_handler,
-            'url': self._dblp_handler,
+            'journal': self._journal_hanlder,
+            'number': self._number_handler,
+            'url': self._url_handler,
             'ee': self._dblp_handler,
         }
         thesis_keys = thesis_types_map.keys()
@@ -78,6 +78,21 @@ class DBLP_DB_Parser(object):
     # def _pages_handler(self, event, elem, thesis):
     #     thesis.pages = elem.txt
     #     return thesis
+
+    def _url_handler(self, event, elem, thesis):
+        url = ThesisUrl(url=elem.text)
+        thesis.urls.append(url)
+        return thesis
+
+    def _number_handler(self, event, elem, thesis):
+        number = Number(number=elem.text)
+        thesis.number.append(number)
+        return thesis
+
+    def _journal_hanlder(self, event, elem, thesis):
+        journal = Journal(journal=elem.text)
+        thesis.journal.append(journal)
+        return thesis
 
     def _volume_handler(self, event, elem, thesis):
         volume = Volume(volume=elem.text)
