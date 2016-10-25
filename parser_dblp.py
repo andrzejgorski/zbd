@@ -177,22 +177,28 @@ class DBLP_DB_Parser(object):
     def _title_handler(self, event, elem, thesis):
         thesis.title = elem.text
 
-    def _get_thesis_attribs(self, elem):
-        keys = ['key', 'mdate']
-        result = {
-            'key': elem.attrib['key'],
+    def _get_thesis_attrs(self, elem):
+        thesis_attrs = {
+            'key': elem.attrib.get('key'),
             'mdate': datetime.strptime(
-                        elem.attrib['mdate'], '%Y-%m-%d').date(),
+                        elem.attrib.get('mdate'), '%Y-%m-%d').date(),
         }
-        return result
+        return thesis_attrs
+
+    def _get_thesis_extra_infos(self, elem):
+        attrs_keys = ['key', 'mdate']
+        extra_infos = list()
+        for key in list(set(elem.attrib.keys()) - set(attrs_keys)):
+            extra_infos.append(ThesisExtraInfo(key=key, value=elem.attrib[key]))
+        return extra_infos
 
     def _thesis_handler(self, event, elem, thesis):
         if event == 'start' and thesis is None:
-            keys = self._get_thesis_attribs(elem)
-            return Thesis(
-                    thesis_type=thesis_types_map[elem.tag],
-                    **keys
-                )
+            keys = self._get_thesis_attrs(elem)
+            thesis = Thesis(thesis_type=thesis_types_map[elem.tag], **keys)
+            for extra_info in self._get_thesis_extra_infos(elem):
+                thesis.extra_infos.append(extra_info)
+            return thesis
         elif event == 'end' and thesis is not None:
             self.session.add(thesis)
             return None
