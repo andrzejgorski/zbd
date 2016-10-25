@@ -167,11 +167,11 @@ class DBLP_DB_Parser(object):
     @tag_handler
     def _pages_handler(self, event, elem, thesis):
         pages = (
-            self.session.query(Pages)
-            .filter(Pages.pages == elem.text)
+            self.session.query(ThesisPages)
+            .filter(ThesisPages.pages == elem.text)
             .first()
         )
-        pages = pages or Pages(pages=elem.text)
+        pages = pages or ThesisPages(pages=elem.text)
         thesis.pages.append(pages)
 
     @tag_handler
