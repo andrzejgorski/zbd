@@ -19,12 +19,12 @@ from db_connection import (
     Volume,
 )
 
+
 def tag_handler(func):
     def wrapper(self, event, elem, thesis):
         if event == 'end':
             func(self, event, elem, thesis)
         return thesis
-
     return wrapper
 
 
@@ -33,6 +33,7 @@ class DBLP_DB_Parser(object):
         self.iterator = etree.iterparse(
             xml_path,
             events=('start', 'end'),
+            load_dtd=True,
         )
         db_url = 'sqlite:///%s' % db_path
         self.session = DataBase(db_url).get_session()
@@ -49,7 +50,7 @@ class DBLP_DB_Parser(object):
     def _prepare_handlers(self):
         self.tag_handlers = {
             'dblp': self._dblp_handler,
-            'author': self._dblp_handler,
+            'author': self._author_handler,
             'title': self._title_handler,
             'pages': self._pages_handler,
             'year': self._year_handler,
@@ -58,6 +59,7 @@ class DBLP_DB_Parser(object):
             'number': self._number_handler,
             'url': self._url_handler,
             'ee': self._ee_handler,
+            'editor': self._editor_handler,
         }
         thesis_keys = thesis_types_map.keys()
         for key in thesis_keys:
@@ -83,6 +85,24 @@ class DBLP_DB_Parser(object):
     @tag_handler
     def _dblp_handler(self, event, elem, thesis):
         pass
+
+    def _get_person(self, name):
+        person = (
+            self.session.query(Person)
+            .filter(Person.name == name)
+            .first()
+        )
+        return person or Person(name=name)
+
+    @tag_handler
+    def _editor_handler(self, event, elem, thesis):
+        person = self._get_person(elem.text)
+        thesis.editors.append(person)
+
+    @tag_handler
+    def _author_handler(self, event, elem, thesis):
+        person = self._get_person(elem.text)
+        thesis.authors.append(person)
 
     @tag_handler
     def _pages_handler(self, event, elem, thesis):
