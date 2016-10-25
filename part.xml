@@ -54,6 +54,32 @@
 <url>db/journals/acta/acta7.html#Schonhage77</url>
 <ee>http://dx.doi.org/10.1007/BF00289470</ee>
 </article>
+<article mdate="2016-03-11" key="journals/thipeac/ShiLL07">
+<author>Weidong Shi</author>
+<author>Chenghuai Lu</author>
+<author>Hsien-Hsin S. Lee</author>
+<title>Memory-Centric Security Architecture.</title>
+<pages>95-115</pages>
+<year>2007</year>
+<volume>1</volume>
+<journal>Trans. HiPEAC</journal>
+<ee>http://dx.doi.org/10.1007/978-3-540-71528-3_7</ee>
+<crossref>journals/thipeac/2007-1</crossref>
+<url>db/journals/thipeac/thipeac1.html#ShiLL07</url>
+</article>
+
+<proceedings mdate="2016-03-11" key="journals/thipeac/2009-2">
+<editor>Per Stenstr&ouml;m</editor>
+<title>Transactions on High-Performance Embedded Architectures and Compilers II</title>
+<volume>5470</volume>
+<year>2009</year>
+<ee>http://dx.doi.org/10.1007/978-3-642-00904-4</ee>
+<isbn>978-3-642-00903-7</isbn>
+<booktitle>Trans. HiPEAC</booktitle>
+<series href="db/journals/lncs.html">Lecture Notes in Computer Science</series>
+<publisher>Springer</publisher>
+<url>db/journals/thipeac/thipeac2.html</url>
+</proceedings>
 
 
 </dblp>

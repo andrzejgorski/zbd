@@ -7,6 +7,8 @@ from consts import (
     thesis_types_map,
 )
 from db_connection import (
+    BookTitle,
+    Crossref,
     DataBase,
     Journal,
     Number,
@@ -60,6 +62,11 @@ class DBLP_DB_Parser(object):
             'url': self._url_handler,
             'ee': self._ee_handler,
             'editor': self._editor_handler,
+            'crossref': self._crossref_handler,
+            'booktitle': self._booktitle_handler,
+            'isbn': self._dblp_handler,
+            'series': self._dblp_handler,
+            'publisher': self._dblp_handler,
         }
         thesis_keys = thesis_types_map.keys()
         for key in thesis_keys:
@@ -93,6 +100,16 @@ class DBLP_DB_Parser(object):
             .first()
         )
         return person or Person(name=name)
+
+    @tag_handler
+    def _booktitle_handler(self, event, elem, thesis):
+        booktitle = BookTitle(booktitle=elem.text)
+        thesis.booktitle.append(booktitle)
+
+    @tag_handler
+    def _crossref_handler(self, event, elem, thesis):
+        crossref = Crossref(crossref=elem.text)
+        thesis.crossref.append(crossref)
 
     @tag_handler
     def _editor_handler(self, event, elem, thesis):

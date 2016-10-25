@@ -94,7 +94,7 @@ class Thesis(Base):
     title = Column(String)
     year = Column(Integer)
 
-    crossrefs = relationship('Crossref', secondary=thesis_crossref)
+    crossref = relationship('Crossref', secondary=thesis_crossref)
     booktitle = relationship('BookTitle', secondary=thesis_booktitle)
     number = relationship('Number', secondary=thesis_number)
     volume = relationship('Volume', secondary=thesis_volume)
