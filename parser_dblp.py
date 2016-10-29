@@ -55,6 +55,7 @@ class DBLP_DB_Parser(object):
             'journal': dict(),
             'volume': dict(),
         }
+        self.thesis_counter = 0
 
     def _add_thesis_types(self):
         if self.session.query(ThesisType).count() != 9:
@@ -235,6 +236,9 @@ class DBLP_DB_Parser(object):
         return extra_infos
 
     def _thesis_handler(self, event, elem, thesis):
+        self.thesis_counter += 1
+        if self.thesis_counter % 10000 == 0:
+            print self.thesis_counter
         if event == 'start' and thesis is None:
             keys = self._get_thesis_attrs(elem)
             thesis = Thesis(thesis_type=thesis_types_map[elem.tag], **keys)
@@ -246,7 +250,6 @@ class DBLP_DB_Parser(object):
             self.session.commit()
             return None
         raise Exception('Error in thesis handler')
-
 
 if __name__ == "__main__":
     parser = DBLP_DB_Parser('dblp.xml', 'baza_dblp.sqlite3')
