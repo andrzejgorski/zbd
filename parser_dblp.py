@@ -47,7 +47,9 @@ class DBLP_DB_Parser(object):
         self.cache = {
             'booktitle': dict(),
             'crossref': dict(),
-            'person': dict(),
+
+            # name of the person
+            'name': dict(),
             'pages': dict(),
             'number': dict(),
             'journal': dict(),
@@ -139,37 +141,25 @@ class DBLP_DB_Parser(object):
         extra_info = ThesisExtraInfo(key=elem.tag, value=elem.text)
         thesis.extra_infos.append(extra_info)
 
-    def _get_item(self, elem, item_name, item_class):
-        if elem.text in self.cache[item_name].keys():
-            return self.cache[item_name][elem.text]
-        item_params = {item_name: elem.text}
+    def _get_item(self, text, item_name, item_class):
+        if text in self.cache[item_name].keys():
+            return self.cache[item_name][text]
+        item_params = {item_name: text}
         item = item_class(**item_params)
-        self.cache[item_name][elem.text] = item
+        self.cache[item_name][text] = item
         return item
 
     @tag_handler
     def _booktitle_handler(self, event, elem, thesis):
-        thesis.booktitle.append(self._get_item(elem, 'booktitle', BookTitle))
+        thesis.booktitle.append(
+            self._get_item(elem.text, 'booktitle', BookTitle))
 
     @tag_handler
     def _crossref_handler(self, event, elem, thesis):
-        # TODO cache it
-        crossref = (
-            self.session.query(Crossref)
-            .filter(Crossref.crossref == elem.text)
-            .first()
-        )
-        crossref = crossref or Crossref(crossref=elem.text)
-        thesis.crossref.append(crossref)
+        thesis.crossref.append(self._get_item(elem.text, 'crossref', Crossref))
 
     def _get_person(self, name):
-        # TODO cache it
-        person = (
-            self.session.query(Person)
-            .filter(Person.name == name)
-            .first()
-        )
-        return person or Person(name=name)
+        return self._get_item(name, 'name', Person)
 
     def _add_person_extra_infos(self, elem, person):
         for key in elem.attrib.keys():
@@ -190,14 +180,7 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _pages_handler(self, event, elem, thesis):
-        # TODO cache it
-        pages = (
-            self.session.query(ThesisPages)
-            .filter(ThesisPages.pages == elem.text)
-            .first()
-        )
-        pages = pages or ThesisPages(pages=elem.text)
-        thesis.pages.append(pages)
+        thesis.pages.append(self._get_item(elem.text, 'pages', ThesisPages))
 
     @tag_handler
     def _ee_handler(self, event, elem, thesis):
@@ -211,36 +194,15 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _number_handler(self, event, elem, thesis):
-        # TODO cache it
-        number = (
-            self.session.query(Number)
-            .filter(Number.number == elem.text)
-            .first()
-        )
-        number = number or Number(number=elem.text)
-        thesis.number.append(number)
+        thesis.number.append(self._get_item(elem.text, 'number', Number))
 
     @tag_handler
     def _journal_hanlder(self, event, elem, thesis):
-        # TODO cache it
-        journal = (
-            self.session.query(Journal)
-            .filter(Journal.journal == elem.text)
-            .first()
-        )
-        journal = journal or Journal(journal=elem.text)
-        thesis.journal.append(journal)
+        thesis.journal.append(self._get_item(elem.text, 'journal', Journal))
 
     @tag_handler
     def _volume_handler(self, event, elem, thesis):
-        # TODO cache it
-        volume = (
-            self.session.query(Volume)
-            .filter(Volume.volume == elem.text)
-            .first()
-        )
-        volume = volume or Volume(volume=elem.text)
-        thesis.volume.append(volume)
+        thesis.volume.append(self._get_item(elem.text, 'volume', Volume))
 
     @tag_handler
     def _year_handler(self, event, elem, thesis):
@@ -287,5 +249,5 @@ class DBLP_DB_Parser(object):
 
 
 if __name__ == "__main__":
-    parser = DBLP_DB_Parser('part.xml', 'baza_dblp.sqlite3')
+    parser = DBLP_DB_Parser('dblp.xml', 'baza_dblp.sqlite3')
     parser.parse()
