@@ -141,7 +141,7 @@ class DBLP_DB_Parser(object):
 
     def _get_item(self, elem, item_name, item_class):
         if elem.text in self.cache[item_name].keys():
-            return self.cahce[item_name][elem.text]
+            return self.cache[item_name][elem.text]
         item_params = {item_name: elem.text}
         item = item_class(**item_params)
         self.cache[item_name][elem.text] = item
@@ -287,5 +287,5 @@ class DBLP_DB_Parser(object):
 
 
 if __name__ == "__main__":
-    parser = DBLP_DB_Parser('dblp.xml', 'baza_dblp.sqlite3')
+    parser = DBLP_DB_Parser('part.xml', 'baza_dblp.sqlite3')
     parser.parse()

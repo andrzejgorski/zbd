@@ -2,6 +2,7 @@
 <!DOCTYPE dblp SYSTEM "dblp.dtd">
 <dblp>
 <article mdate="2011-01-11" key="journals/acta/Saxena96">
+<booktitle>Trans. HiPEAC</booktitle>
 <author>Sanjeev Saxena</author>
 <title>Parallel Integer Sorting and Simulation Amongst CRCW Models.</title>
 <pages>607-619</pages>
