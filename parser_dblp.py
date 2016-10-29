@@ -44,6 +44,15 @@ class DBLP_DB_Parser(object):
         self._prepare_handlers()
         self._add_thesis_types()
         self._update_thesis_type_map()
+        self.cache = {
+            'booktitle': dict(),
+            'crossref': dict(),
+            'person': dict(),
+            'pages': dict(),
+            'number': dict(),
+            'journal': dict(),
+            'volume': dict(),
+        }
 
     def _add_thesis_types(self):
         if self.session.query(ThesisType).count() != 9:
@@ -130,18 +139,21 @@ class DBLP_DB_Parser(object):
         extra_info = ThesisExtraInfo(key=elem.tag, value=elem.text)
         thesis.extra_infos.append(extra_info)
 
+    def _get_item(self, elem, item_name, item_class):
+        if elem.text in self.cache[item_name].keys():
+            return self.cahce[item_name][elem.text]
+        item_params = {item_name: elem.text}
+        item = item_class(**item_params)
+        self.cache[item_name][elem.text] = item
+        return item
+
     @tag_handler
     def _booktitle_handler(self, event, elem, thesis):
-        booktitle = (
-            self.session.query(BookTitle)
-            .filter(BookTitle.booktitle == elem.text)
-            .first()
-        )
-        booktitle = booktitle or BookTitle(booktitle=elem.text)
-        thesis.booktitle.append(booktitle)
+        thesis.booktitle.append(self._get_item(elem, 'booktitle', BookTitle))
 
     @tag_handler
     def _crossref_handler(self, event, elem, thesis):
+        # TODO cache it
         crossref = (
             self.session.query(Crossref)
             .filter(Crossref.crossref == elem.text)
@@ -151,6 +163,7 @@ class DBLP_DB_Parser(object):
         thesis.crossref.append(crossref)
 
     def _get_person(self, name):
+        # TODO cache it
         person = (
             self.session.query(Person)
             .filter(Person.name == name)
@@ -177,6 +190,7 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _pages_handler(self, event, elem, thesis):
+        # TODO cache it
         pages = (
             self.session.query(ThesisPages)
             .filter(ThesisPages.pages == elem.text)
@@ -197,6 +211,7 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _number_handler(self, event, elem, thesis):
+        # TODO cache it
         number = (
             self.session.query(Number)
             .filter(Number.number == elem.text)
@@ -207,6 +222,7 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _journal_hanlder(self, event, elem, thesis):
+        # TODO cache it
         journal = (
             self.session.query(Journal)
             .filter(Journal.journal == elem.text)
@@ -217,6 +233,7 @@ class DBLP_DB_Parser(object):
 
     @tag_handler
     def _volume_handler(self, event, elem, thesis):
+        # TODO cache it
         volume = (
             self.session.query(Volume)
             .filter(Volume.volume == elem.text)
