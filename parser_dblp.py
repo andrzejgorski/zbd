@@ -7,20 +7,10 @@ from consts import (
     thesis_types_map,
 )
 from db_connection import (
-    BookTitle,
-    Crossref,
-    DataBase,
-    Journal,
-    Number,
-    PersonExtraInfo,
     Person,
+    DataBase,
     Thesis,
-    ThesisEE,
-    ThesisExtraInfo,
-    ThesisPages,
     ThesisType,
-    ThesisUrl,
-    Volume,
 )
 
 
@@ -67,36 +57,36 @@ class DBLP_DB_Parser(object):
 
         self.tag_handlers = {
             'author': self._author_handler,
-            'booktitle': self._booktitle_handler,
-            'crossref': self._crossref_handler,
+            'booktitle': self._dblp_handler,
+            'crossref': self._dblp_handler,
             'dblp': self._dblp_handler,
-            'editor': self._editor_handler,
-            'ee': self._ee_handler,
-            'journal': self._journal_hanlder,
-            'number': self._number_handler,
-            'pages': self._pages_handler,
-            'title': self._title_handler,
-            'url': self._url_handler,
-            'volume': self._volume_handler,
-            'year': self._year_handler,
+            'editor': self._dblp_handler,
+            'ee': self._dblp_handler,
+            'journal': self._dblp_handler,
+            'number': self._dblp_handler,
+            'pages': self._dblp_handler,
+            'title': self._dblp_handler,
+            'url': self._dblp_handler,
+            'volume': self._dblp_handler,
+            'year': self._dblp_handler,
 
             # For extra infos
-            'address': self._extra_info_handler,
-            'cdrom': self._extra_info_handler,
-            'chapter': self._extra_info_handler,
-            'cite': self._extra_info_handler,
-            'isbn': self._extra_info_handler,
-            'month': self._extra_info_handler,
-            'note': self._extra_info_handler,
-            'publisher': self._extra_info_handler,
-            'publnr': self._extra_info_handler,
-            'school': self._extra_info_handler,
-            'series': self._extra_info_handler,
-            'sub': self._title_content_handler,
-            'sup': self._title_content_handler,
-            'i': self._title_content_handler,
-            'tt': self._title_content_handler,
-            'ref': self._title_content_handler,
+            'address': self._dblp_handler,
+            'cdrom': self._dblp_handler,
+            'chapter': self._dblp_handler,
+            'cite': self._dblp_handler,
+            'isbn': self._dblp_handler,
+            'month': self._dblp_handler,
+            'note': self._dblp_handler,
+            'publisher': self._dblp_handler,
+            'publnr': self._dblp_handler,
+            'school': self._dblp_handler,
+            'series': self._dblp_handler,
+            'sub': self._dblp_handler,
+            'sup': self._dblp_handler,
+            'i': self._dblp_handler,
+            'tt': self._dblp_handler,
+            'ref': self._dblp_handler,
         }
 
         thesis_keys = thesis_types_map.keys()
@@ -221,8 +211,8 @@ class DBLP_DB_Parser(object):
         thesis.title += text
 
     def _get_thesis_attrs(self, elem):
-        thesis_attrs = {
-            'key': elem.attrib.get('key'),
+        return dict()
+        thesis_attrs = { 'key': elem.attrib.get('key'),
             'mdate': datetime.strptime(
                         elem.attrib.get('mdate'), '%Y-%m-%d').date(),
         }
@@ -240,10 +230,8 @@ class DBLP_DB_Parser(object):
         if self.thesis_counter % 10000 == 0:
             print self.thesis_counter
         if event == 'start' and thesis is None:
-            keys = self._get_thesis_attrs(elem)
-            thesis = Thesis(thesis_type=thesis_types_map[elem.tag], **keys)
-            for extra_info in self._get_thesis_extra_infos(elem):
-                thesis.extra_infos.append(extra_info)
+            # keys = self._get_thesis_attrs(elem)
+            thesis = Thesis(thesis_type=thesis_types_map[elem.tag])
             return thesis
         elif event == 'end' and thesis is not None:
             self.session.add(thesis)

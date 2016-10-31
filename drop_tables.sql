@@ -1,21 +1,4 @@
 DROP TABLE 'person';
-DROP TABLE 'thesis_editor';
 DROP TABLE 'thesis_author';
-DROP TABLE 'thesis_extra_info';
-DROP TABLE 'person_extra_info';
-DROP TABLE 'thesis_ee';
-DROP TABLE 'thesis_url';
-DROP TABLE 'thesis_journal';
-DROP TABLE 'journal';
-DROP TABLE 'volume';
-DROP TABLE 'thesis_volume';
-DROP TABLE 'number';
-DROP TABLE 'thesis_number';
-DROP TABLE 'booktitle';
-DROP TABLE 'thesis_booktitle';
-DROP TABLE 'crossref';
-DROP TABLE 'thesis_crossref';
 DROP TABLE 'thesis_type';
-DROP TABLE 'thesis_pages';
 DROP TABLE 'thesis';
-
